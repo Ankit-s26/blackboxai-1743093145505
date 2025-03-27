@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responder Dashboard | Emergency Response Network</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        #responseMap {
+            height: 400px;
+            width: 100%;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .status-pending {
+            background-color: #F59E0B;
+            color: white;
+        }
+        .status-accepted {
+            background-color: #3B82F6;
+            color: white;
+        }
+        .status-completed {
+            background-color: #10B981;
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div class="w-64 bg-gray-800 text-white">
+            <div class="p-4 border-b border-gray-700">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-ambulance text-2xl text-red-400"></i>
+                    <h1 class="text-xl font-bold">Responder Dashboard</h1>
+                </div>
+            </div>
+            <nav class="p-4">
+                <ul class="space-y-2">
+                    <li>
+                        <a href="#" class="flex items-center space-x-2 px-3 py-2 bg-gray-700 rounded-md">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center space-x-2 px-3 py-2 hover:bg-gray-700 rounded-md">
+                            <i class="fas fa-list"></i>
+                            <span>Active Requests</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center space-x-2 px-3 py-2 hover:bg-gray-700 rounded-md">
+                            <i class="fas fa-history"></i>
+                            <span>Response History</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center space-x-2 px-3 py-2 hover:bg-gray-700 rounded-md">
+                            <i class="fas fa-user"></i>
+                            <span>Profile</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center space-x-2 px-3 py-2 hover:bg-gray-700 rounded-md">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="index.html" class="flex items-center space-x-2 px-3 py-2 hover:bg-gray-700 rounded-md">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 overflow-auto">
+            <header class="bg-white shadow-sm">
+                <div class="flex justify-between items-center p-4">
+                    <h2 class="text-xl font-bold text-gray-800">Emergency Response Dashboard</h2>
+                    <div class="flex items-center space-x-4">
+                        <div class="relative">
+                            <i class="fas fa-bell text-gray-500 text-xl"></i>
+                            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">3</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold">JD</div>
+                            <span class="text-sm font-medium">John Doe</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="p-6">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                    <!-- Status Card -->
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="font-bold text-gray-700">Current Status</h3>
+                            <div class="flex space-x-2">
+                                <button id="statusToggle" class="px-3 py-1 bg-green-500 text-white rounded-md text-sm font-medium">
+                                    Available
+                                </button>
+                            </div>
+                        </div>
+                        <div class="space-y-4">
+                            <div>
+                                <p class="text-sm text-gray-500">Current Location</p>
+                                <p class="font-medium">Main Hospital, Downtown</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500">Vehicle</p>
+                                <p class="font-medium">Ambulance #ER-205</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stats Card -->
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <h3 class="font-bold text-gray-700 mb-4">Today's Activity</h3>
+                        <div class="grid grid-cols-3 gap-4 text-center">
+                            <div>
+                                <p class="text-2xl font-bold text-blue-500">5</p>
+                                <p class="text-xs text-gray-500">Requests</p>
+                            </div>
+                            <div>
+                                <p class="text-2xl font-bold text-green-500">3</p>
+                                <p class="text-xs text-gray-500">Completed</p>
+                            </div>
+                            <div>
+                                <p class="text-2xl font-bold text-yellow-500">2</p>
+                                <p class="text-xs text-gray-500">Pending</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <h3 class="font-bold text-gray-700 mb-4">Quick Actions</h3>
+                        <div class="grid grid-cols-2 gap-3">
+                            <button class="flex items-center justify-center space-x-2 bg-blue-50 text-blue-600 p-3 rounded-md hover:bg-blue-100 transition">
+                                <i class="fas fa-map-marked-alt"></i>
+                                <span class="text-sm">Navigation</span>
+                            </button>
+                            <button class="flex items-center justify-center space-x-2 bg-green-50 text-green-600 p-3 rounded-md hover:bg-green-100 transition">
+                                <i class="fas fa-phone-alt"></i>
+                                <span class="text-sm">Call Victim</span>
+                            </button>
+                            <button class="flex items-center justify-center space-x-2 bg-purple-50 text-purple-600 p-3 rounded-md hover:bg-purple-100 transition">
+                                <i class="fas fa-hospital"></i>
+                                <span class="text-sm">Hospital Info</span>
+                            </button>
+                            <button class="flex items-center justify-center space-x-2 bg-red-50 text-red-600 p-3 rounded-md hover:bg-red-100 transition">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <span class="text-sm">Emergency</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Active Requests -->
+                <div class="bg-white rounded-lg shadow overflow-hidden mb-6">
+                    <div class="border-b border-gray-200 p-4">
+                        <h3 class="font-bold text-gray-700">Active Emergency Requests</h3>
+                    </div>
+                    <div class="divide-y divide-gray-200">
+                        <!-- Request Item -->
+                        <div class="p-4 hover:bg-gray-50">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <div class="flex items-center space-x-2 mb-1">
+                                        <span class="status-badge status-pending">Pending</span>
+                                        <span class="text-sm text-gray-500">#ER-2023-0015</span>
+                                    </div>
+                                    <h4 class="font-medium">Car Accident on Highway I-95</h4>
+                                    <p class="text-sm text-gray-500">2 victims, possible injuries</p>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <button class="px-3 py-1 bg-blue-500 text-white rounded-md text-sm font-medium hover:bg-blue-600">
+                                        Accept
+                                    </button>
+                                    <button class="px-3 py-1 bg-gray-200 text-gray-700 rounded-md text-sm font-medium hover:bg-gray-300">
+                                        Details
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Request Item -->
+                        <div class="p-4 hover:bg-gray-50">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <div class="flex items-center space-x-2 mb-1">
+                                        <span class="status-badge status-accepted">En Route</span>
+                                        <span class="text-sm text-gray-500">#ER-2023-0014</span>
+                                    </div>
+                                    <h4 class="font-medium">Medical Emergency - Chest Pains</h4>
+                                    <p class="text-sm text-gray-500">1 victim, age 58</p>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <button class="px-3 py-1 bg-green-500 text-white rounded-md text-sm font-medium hover:bg-green-600">
+                                        On Scene
+                                    </button>
+                                    <button class="px-3 py-1 bg-gray-200 text-gray-700 rounded-md text-sm font-medium hover:bg-gray-300">
+                                        Details
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Map Section -->
+                <div class="bg-white rounded-lg shadow overflow-hidden">
+                    <div class="border-b border-gray-200 p-4">
+                        <h3 class="font-bold text-gray-700">Response Map</h3>
+                    </div>
+                    <div id="responseMap" class="w-full h-96"></div>
+                    <div class="p-4 border-t border-gray-200">
+                        <div class="flex justify-between items-center">
+                            <div id="assignmentInfo">
+                                <p class="text-sm text-gray-500">Current Assignment</p>
+                                <p class="font-medium" id="assignmentTitle">No active assignment</p>
+                                <p class="text-sm text-gray-500" id="assignmentETA"></p>
+                            </div>
+                            <button id="navigateBtn" class="px-4 py-2 bg-red-500 text-white rounded-md font-medium hover:bg-red-600 hidden">
+                                Navigate
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mapbox GL JS -->
+                <script src="https://api.mapbox.com/mapbox-gl-js/v2.9.2/mapbox-gl.js"></script>
+                <link href="https://api.mapbox.com/mapbox-gl-js/v2.9.2/mapbox-gl.css" rel="stylesheet" />
+                <script>
+                    // Initialize map
+                    mapboxgl.accessToken = 'YOUR_MAPBOX_ACCESS_TOKEN';
+                    const map = new mapboxgl.Map({
+                        container: 'responseMap',
+                        style: 'mapbox://styles/mapbox/streets-v11',
+                        center: [-98.5795, 39.8283], // Default to US center
+                        zoom: 3
+                    });
+
+                    // Add geolocate control
+                    map.addControl(
+                        new mapboxgl.GeolocateControl({
+                            positionOptions: {
+                                enableHighAccuracy: true
+                            },
+                            trackUserLocation: true,
+                            showUserLocation: true
+                        })
+                    );
+
+                    // Emergency markers
+                    const emergencyMarkers = {};
+                    const responderMarkers = {};
+
+                    function updateEmergencyOnMap(emergency) {
+                        // Remove existing marker if any
+                        if (emergencyMarkers[emergency.id]) {
+                            emergencyMarkers[emergency.id].remove();
+                        }
+
+                        // Add new marker
+                        const el = document.createElement('div');
+                        el.className = 'emergency-marker';
+                        el.style.backgroundImage = 'url(https://docs.mapbox.com/mapbox-gl-js/assets/rocket.png)';
+                        el.style.width = '32px';
+                        el.style.height = '32px';
+                        el.style.backgroundSize = '100%';
+
+                        emergencyMarkers[emergency.id] = new mapboxgl.Marker(el)
+                            .setLngLat([emergency.coordinates.lng, emergency.coordinates.lat])
+                            .setPopup(new mapboxgl.Popup().setHTML(`
+                                <h3 class="font-bold">${emergency.type.toUpperCase()}</h3>
+                                <p>${emergency.location}</p>
+                                <p class="text-sm">${emergency.victims} victims</p>
+                            `))
+                            .addTo(map);
+
+                        // Update assignment info if this is our emergency
+                        if (emergency.assignedResponder === responderId) {
+                            document.getElementById('assignmentTitle').textContent = 
+                                `${emergency.type} - ${emergency.location}`;
+                            document.getElementById('assignmentETA').textContent = 
+                                `ETA: ${calculateETA(currentLocation, emergency.coordinates)} minutes`;
+                            document.getElementById('navigateBtn').classList.remove('hidden');
+                        }
+                    }
+
+                    function updateResponderOnMap(responder) {
+                        // Remove existing marker if any
+                        if (responderMarkers[responder.id]) {
+                            responderMarkers[responder.id].remove();
+                        }
+
+                        // Add new marker with Indian responder info
+                        const el = document.createElement('div');
+                        el.className = 'responder-marker';
+                        
+                        // Set different icons based on vehicle type
+                        const vehicleType = responder.details?.vehicle?.toLowerCase() || 'ambulance';
+                        let iconUrl = 'https://docs.mapbox.com/mapbox-gl-js/assets/car.png';
+                        
+                        if (vehicleType.includes('ambulance')) {
+                            iconUrl = 'https://cdn-icons-png.flaticon.com/512/3313/3313888.png';
+                        } else if (vehicleType.includes('police')) {
+                            iconUrl = 'https://cdn-icons-png.flaticon.com/512/2534/2534409.png';
+                        } else if (vehicleType.includes('fire')) {
+                            iconUrl = 'https://cdn-icons-png.flaticon.com/512/599/599512.png';
+                        }
+                        
+                        el.style.backgroundImage = `url(${iconUrl})`;
+                        el.style.width = '28px';
+                        el.style.height = '28px';
+                        el.style.backgroundSize = '100%';
+                        el.style.filter = 'drop-shadow(0 0 2px rgba(0,0,0,0.5))';
+
+                        const popupContent = `
+                            <div class="p-2">
+                                <h4 class="font-bold">${responder.details?.name || 'Responder'}</h4>
+                                <p class="text-sm">${responder.details?.vehicle || 'Ambulance'}</p>
+                                <p class="text-xs text-gray-500">Last update: ${new Date().toLocaleTimeString()}</p>
+                            </div>
+                        `;
+
+                        responderMarkers[responder.id] = new mapboxgl.Marker(el)
+                            .setLngLat([responder.location.lng, responder.location.lat])
+                            .setPopup(new mapboxgl.Popup().setHTML(popupContent))
+                            .addTo(map);
+
+                        // Auto-update every 30 seconds
+                        if (responder.id === responderId) {
+                            setTimeout(() => {
+                                if (navigator.geolocation) {
+                                    navigator.geolocation.getCurrentPosition(
+                                        position => updateLocation({
+                                            lat: position.coords.latitude,
+                                            lng: position.coords.longitude
+                                        }),
+                                        err => console.error('Location error:', err)
+                                    );
+                                }
+                            }, 30000);
+                        }
+                    }
+
+                    function calculateETA(start, end) {
+                        // Simplified calculation - in a real app you'd use a routing service
+                        return Math.floor(Math.random() * 15) + 5; // 5-20 minutes
+                    }
+
+                    // Handle navigation button click
+                    document.getElementById('navigateBtn').addEventListener('click', () => {
+                        // In a real app, this would open navigation in Google Maps/Apple Maps
+                        alert('Navigation would open in your preferred maps application');
+                    });
+                </script>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        // WebSocket connection and state management
+        let ws;
+        let responderId = generateResponderId();
+        let currentLocation = null;
+
+        function connectWebSocket() {
+            ws = new WebSocket(`ws://${window.location.host}`);
+
+            ws.onopen = () => {
+                console.log('WebSocket connected');
+                registerResponder();
+                startLocationTracking();
+            };
+
+            ws.onmessage = (event) => {
+                const message = JSON.parse(event.data);
+                handleWebSocketMessage(message);
+            };
+
+            ws.onclose = () => {
+                console.log('WebSocket disconnected - attempting reconnect');
+                setTimeout(connectWebSocket, 5000);
+            };
+
+            ws.onerror = (error) => {
+                console.error('WebSocket error:', error);
+            };
+        }
+
+        function registerResponder() {
+            // Get responder details from localStorage or form
+            const responderData = {
+                type: 'responder_register',
+                responderId: responderId,
+                name: 'Responder ' + responderId.substring(0, 4),
+                vehicle: 'Ambulance #' + Math.floor(Math.random() * 1000),
+                location: currentLocation
+            };
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify(responderData));
+            }
+        }
+
+        function startLocationTracking() {
+            if (navigator.geolocation) {
+                navigator.geolocation.watchPosition(
+                    (position) => {
+                        currentLocation = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude
+                        };
+                        updateLocation(currentLocation);
+                    },
+                    (error) => console.error('Geolocation error:', error),
+                    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+                );
+            }
+        }
+
+        function updateLocation(location) {
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({
+                    type: 'responder_location',
+                    responderId: responderId,
+                    location: location
+                }));
+            }
+        }
+
+        function handleWebSocketMessage(message) {
+            switch (message.type) {
+                case 'new_emergency':
+                    displayEmergencyAlert(message.data);
+                    break;
+                case 'emergency_update':
+                    updateEmergencyStatus(message.data);
+                    break;
+                case 'responder_update':
+                    updateResponderList(message.data);
+                    break;
+            }
+        }
+
+        function displayEmergencyAlert(emergency) {
+            const alertHTML = `
+            <div class="p-4 bg-red-50 border-l-4 border-red-500 mb-4 animate-pulse">
+                <div class="flex justify-between">
+                    <div>
+                        <h4 class="font-bold text-red-800">NEW EMERGENCY</h4>
+                        <p class="text-sm">${emergency.type.toUpperCase()} - ${emergency.location}</p>
+                        <p class="text-xs text-gray-500">${new Date(emergency.timestamp).toLocaleTimeString()}</p>
+                        <p class="text-xs mt-1">${emergency.victims} victims</p>
+                    </div>
+                    <button class="text-red-500 hover:text-red-700">
+                        <i class="fas fa-bell"></i>
+                    </button>
+                </div>
+                <div class="mt-2 flex space-x-2">
+                    <button onclick="acceptEmergency('${emergency.id}')" 
+                        class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm">
+                        Accept
+                    </button>
+                    <button onclick="showEmergencyDetails('${emergency.id}')" 
+                        class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-1 rounded text-sm">
+                        Details
+                    </button>
+                </div>
+            </div>`;
+            
+            document.querySelector('.divide-y').insertAdjacentHTML('afterbegin', alertHTML);
+            playNotificationSound();
+        }
+
+        function acceptEmergency(emergencyId) {
+            ws.send(JSON.stringify({
+                type: 'emergency_accept',
+                emergencyId: emergencyId,
+                responderId: responderId
+            }));
+        }
+
+        function updateEmergencyStatus(emergency) {
+            // Update the emergency in the UI
+            const element = document.querySelector(`[data-emergency-id="${emergency.id}"]`);
+            if (element) {
+                const statusBadge = element.querySelector('.status-badge');
+                if (statusBadge) {
+                    statusBadge.className = `status-badge status-${emergency.status}`;
+                    statusBadge.textContent = emergency.status === 'accepted' ? 'En Route' : 
+                                             emergency.status === 'completed' ? 'Completed' : 'Pending';
+                }
+            }
+        }
+
+        function generateResponderId() {
+            return 'resp-' + Math.random().toString(36).substring(2, 8);
+        }
+
+        function playNotificationSound() {
+            try {
+                new Audio('assets/sounds/alert.mp3').play();
+            } catch (e) {
+                console.log('Audio notification failed:', e);
+            }
+        }
+
+        // Status toggle functionality
+        document.getElementById('statusToggle').addEventListener('click', function() {
+            const newStatus = this.textContent.trim() === 'Available' ? 'on_call' : 'available';
+            this.textContent = newStatus === 'available' ? 'Available' : 'On Call';
+            this.className = newStatus === 'available' ? 
+                'px-3 py-1 bg-green-500 text-white rounded-md text-sm font-medium' :
+                'px-3 py-1 bg-yellow-500 text-white rounded-md text-sm font-medium';
+            
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({
+                    type: 'responder_status',
+                    responderId: responderId,
+                    status: newStatus
+                }));
+            }
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            connectWebSocket();
+            initMap(); // Initialize map if needed
+        });
+    </script>
+</body>
+</html>
