@@ -1,0 +1,348 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency Request | Emergency Response Network</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        #map {
+            height: 400px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <header class="bg-red-600 text-white shadow-lg">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-ambulance text-2xl"></i>
+                    <h1 class="text-2xl font-bold">Emergency Request</h1>
+                </div>
+                <a href="index.html" class="hover:underline">
+                    <i class="fas fa-arrow-left mr-1"></i> Back to Home
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-8">
+        <div class="max-w-3xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">
+            <div class="bg-red-600 text-white p-4">
+                <h2 class="text-xl font-bold">
+                    <i class="fas fa-exclamation-triangle mr-2"></i>Report Emergency
+                </h2>
+            </div>
+
+            <form id="emergencyForm" class="p-6">
+                <div class="mb-6">
+                    <label class="block text-gray-700 font-bold mb-2" for="location">
+                        <i class="fas fa-map-marker-alt mr-2 text-red-500"></i>Accident Location
+                    </label>
+                    <div id="map" class="mb-2 rounded-lg border border-gray-300"></div>
+                    <input type="text" id="location" name="location" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                        placeholder="Or enter address manually" required>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <label class="block text-gray-700 font-bold mb-2" for="victims">
+                            <i class="fas fa-user-injured mr-2 text-red-500"></i>Number of Victims
+                        </label>
+                        <select id="victims" name="victims" 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500" required>
+                            <option value="" disabled selected>Select number</option>
+                            <option value="1">1</option>
+                            <option value="2-3">2-3</option>
+                            <option value="4-5">4-5</option>
+                            <option value="5+">More than 5</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-gray-700 font-bold mb-2" for="emergencyType">
+                            <i class="fas fa-bolt mr-2 text-red-500"></i>Emergency Type
+                        </label>
+                        <select id="emergencyType" name="emergencyType" 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500" required>
+                            <option value="" disabled selected>Select type</option>
+                            <option value="car-accident">Car Accident</option>
+                            <option value="medical">Medical Emergency</option>
+                            <option value="fire">Fire</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-gray-700 font-bold mb-2" for="medicalInfo">
+                        <i class="fas fa-notes-medical mr-2 text-red-500"></i>Medical Information (if known)
+                    </label>
+                    <textarea id="medicalInfo" name="medicalInfo" rows="3"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                        placeholder="Describe any known injuries or medical conditions"></textarea>
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-gray-700 font-bold mb-2" for="contactNumber">
+                        <i class="fas fa-phone-alt mr-2 text-red-500"></i>Your Contact Number
+                    </label>
+                    <input type="tel" id="contactNumber" name="contactNumber"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                        placeholder="+1 (___) ___-____" required>
+                </div>
+
+                <!-- Real-time Camera Section -->
+                <div class="mb-6">
+                    <label class="block text-gray-700 font-bold mb-2">
+                        <i class="fas fa-camera mr-2 text-red-500"></i>Attach Photos
+                    </label>
+                    <div class="border-2 border-dashed border-gray-300 rounded-md p-4 text-center">
+                        <video id="cameraPreview" class="w-full mb-2 hidden"></video>
+                        <canvas id="photoCanvas" class="hidden"></canvas>
+                        <button type="button" id="startCamera" class="bg-green-500 text-white px-4 py-2 rounded-md mr-2">
+                            <i class="fas fa-camera mr-2"></i>Open Camera
+                        </button>
+                        <button type="button" id="takePhoto" class="bg-blue-500 text-white px-4 py-2 rounded-md hidden">
+                            <i class="fas fa-camera mr-2"></i>Take Photo
+                        </button>
+                        <div id="photoPreview" class="mt-2"></div>
+                    </div>
+                </div>
+
+                <!-- Help Button -->
+                <div class="flex flex-col sm:flex-row justify-between items-center">
+                    <button type="submit" 
+                        class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 mb-4 sm:mb-0 w-full sm:w-auto">
+                        <i class="fas fa-bell mr-2"></i>Request Emergency Help
+                    </button>
+                    <div class="text-sm text-gray-500">
+                        <i class="fas fa-lock mr-1"></i>Your information is secure
+                    </div>
+                </div>
+
+                <!-- Connect to Responder Button -->
+                <div class="mt-4 text-center">
+                    <button type="button" id="connectResponder" 
+                        class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300">
+                        <i class="fas fa-user-shield mr-2"></i>Connect with Responder
+                    </button>
+                </div>
+            </form>
+
+            <div id="confirmation" class="hidden p-6 bg-green-50 border-t border-green-200">
+                <div class="flex items-center">
+                    <i class="fas fa-check-circle text-green-500 text-3xl mr-4"></i>
+                    <div>
+                        <h3 class="text-lg font-bold text-green-800">Emergency Request Sent!</h3>
+                        <p class="text-green-600">Help is on the way. Stay on the line for updates.</p>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <p class="text-sm text-gray-600">
+                        <i class="fas fa-info-circle mr-1"></i>Nearest responders have been alerted. Estimated arrival time: <span id="eta" class="font-bold">5-7 minutes</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-4 text-center">
+            <p>&copy; 2023 Emergency Response Network. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Add Mapbox GL JS CSS & JS -->
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.9.2/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.9.2/mapbox-gl.js"></script>
+    <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.min.js"></script>
+    <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.css">
+
+    <script>
+        // Initialize Mapbox
+        mapboxgl.accessToken = 'YOUR_MAPBOX_ACCESS_TOKEN';
+        let map;
+        let marker;
+        let geocoder;
+
+        function initMap() {
+            map = new mapboxgl.Map({
+                container: 'map',
+                style: 'mapbox://styles/mapbox/streets-v11',
+                center: [-74.5, 40], // Default center
+                zoom: 9
+            });
+
+            // Add geocoder control
+            geocoder = new MapboxGeocoder({
+                accessToken: mapboxgl.accessToken,
+                mapboxgl: mapboxgl,
+                marker: false,
+                placeholder: 'Search for accident location'
+            });
+
+            document.getElementById('map').appendChild(geocoder.onAdd(map));
+
+            // Add geolocate control
+            map.addControl(
+                new mapboxgl.GeolocateControl({
+                    positionOptions: {
+                        enableHighAccuracy: true
+                    },
+                    trackUserLocation: true,
+                    showUserLocation: true
+                })
+            );
+
+            // Handle map clicks
+            map.on('click', (e) => {
+                if (marker) marker.remove();
+                marker = new mapboxgl.Marker()
+                    .setLngLat(e.lngLat)
+                    .addTo(map);
+                
+                updateLocationInput(e.lngLat);
+            });
+
+            // Handle geocoder result
+            geocoder.on('result', (e) => {
+                if (marker) marker.remove();
+                marker = new mapboxgl.Marker()
+                    .setLngLat(e.result.center)
+                    .addTo(map);
+                
+                updateLocationInput({
+                    lng: e.result.center[0],
+                    lat: e.result.center[1]
+                });
+            });
+
+            // Try to get user's current location
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const center = {
+                            lng: position.coords.longitude,
+                            lat: position.coords.latitude
+                        };
+                        map.flyTo({ center, zoom: 14 });
+                        updateLocationInput(center);
+                    },
+                    (error) => {
+                        console.error('Error getting location:', error);
+                        document.getElementById('location').placeholder = 'Please select location on map';
+                    }
+                );
+            }
+        }
+
+        function updateLocationInput(coords) {
+            // Verify coordinates are valid
+            if (Math.abs(coords.lat) > 90 || Math.abs(coords.lng) > 180) {
+                alert('Invalid location detected. Please select a valid location in India.');
+                return;
+            }
+
+            // Reverse geocode coordinates to Indian address
+            fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${coords.lng},${coords.lat}.json?access_token=${mapboxgl.accessToken}&country=in`)
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.features.length) {
+                        throw new Error('Invalid location');
+                    }
+                    
+                    // Get Indian address components
+                    const context = data.features[0].context;
+                    const city = context.find(c => c.id.includes('place'))?.text || '';
+                    const state = context.find(c => c.id.includes('region'))?.text || '';
+                    const address = `${data.features[0].text}, ${city}, ${state}`;
+                    
+                    document.getElementById('location').value = address || `Near ${coords.lat.toFixed(4)}, ${coords.lng.toFixed(4)}`;
+                    document.getElementById('coordinates').value = JSON.stringify({
+                        latitude: coords.lat,
+                        longitude: coords.lng,
+                        verified: true
+                    });
+                })
+                .catch(err => {
+                    console.error('Geocoding error:', err);
+                    alert('Please select a valid location in India');
+                });
+        }
+
+        // Example Indian emergency data
+        const sampleEmergencies = [
+            {
+                type: 'Road Accident',
+                location: 'MG Road, Bangalore',
+                victims: 2,
+                contact: '+91 9876543210',
+                name: 'Ankit Sharma'
+            },
+            {
+                type: 'Heart Attack', 
+                location: 'Connaught Place, Delhi',
+                victims: 1,
+                contact: '+91 8765432109',
+                name: 'Priya Patel'
+            }
+        ];
+
+        // Add hidden input for coordinates
+        const coordInput = document.createElement('input');
+        coordInput.type = 'hidden';
+        coordInput.id = 'coordinates';
+        document.getElementById('emergencyForm').appendChild(coordInput);
+
+        // Form submission handler
+        document.getElementById('emergencyForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                type: document.getElementById('emergencyType').value,
+                location: document.getElementById('location').value,
+                coordinates: JSON.parse(document.getElementById('coordinates').value || '{}'),
+                victims: document.getElementById('victims').value,
+                contact: document.getElementById('contactNumber').value,
+                medicalInfo: document.getElementById('medicalInfo').value,
+                timestamp: new Date().toISOString()
+            };
+
+            // Connect to WebSocket and send emergency
+            const ws = new WebSocket(`ws://${window.location.host}`);
+            ws.onopen = () => {
+                ws.send(JSON.stringify({
+                    type: 'emergency',
+                    data: formData
+                }));
+                document.getElementById('confirmation').classList.remove('hidden');
+                window.scrollTo(0, document.body.scrollHeight);
+                ws.close();
+            };
+            
+            ws.onerror = (error) => {
+                console.error('WebSocket error:', error);
+                alert('Failed to send emergency request. Please try again.');
+            };
+        });
+
+        // Add hidden input for coordinates
+        const coordInput = document.createElement('input');
+        coordInput.type = 'hidden';
+        coordInput.id = 'coordinates';
+        document.getElementById('emergencyForm').appendChild(coordInput);
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', initMap);
+    </script>
+</body>
+</html>
